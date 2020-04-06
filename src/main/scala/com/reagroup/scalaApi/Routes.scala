@@ -6,7 +6,7 @@ import org.http4s.circe._
 import org.http4s.server._
 import org.http4s.dsl._
 
-object HelloWorld {
+object Routes {
   val service = HttpService {
     case GET -> Root / "diagnose" =>
       Ok(Json.obj("message" -> Json.fromString(s"Ok")))
@@ -14,7 +14,7 @@ object HelloWorld {
       Ok(Json.obj("message" -> Json.fromString(s"Hello World")))
     case req @ POST -> Root / "record" =>{
       println(req)
-      println("hola")
+      println("post request received")
       Ok(Json.obj("message" -> Json.fromString(s"RECORD")))
     }
   }

@@ -10,6 +10,6 @@ object Server extends ProcessApp {
   val port: Int = envOrNone("HTTP_PORT").fold(3000)(_.toInt)
 
   def process(args: List[String]): Process[Task, Nothing] = BlazeBuilder.bindHttp(port)
-    .mountService(HelloWorld.service, "/")
+    .mountService(Routes.service, "/")
     .serve
 }
