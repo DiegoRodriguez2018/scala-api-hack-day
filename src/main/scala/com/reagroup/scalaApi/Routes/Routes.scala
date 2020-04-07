@@ -4,6 +4,8 @@ import cats.effect.Sync
 import cats.implicits._
 import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
+import org.http4s.EntityDecoder
+import io.circe._, io.circe.parser._
 
 object Routes {
 
@@ -41,6 +43,16 @@ object Routes {
           content <- R.getContent(Record.Id(id))
           resp <- Ok(content)
         } yield resp
+      case req @ POST -> Root / "record" =>
+        req
+          .decode[String] { request =>
+            parse(request) match {
+              case Right(json) => {
+                Ok(request)
+              }
+              case Left(failure) => BadRequest("invalid json")
+            }
+          }
     }
   }
 
