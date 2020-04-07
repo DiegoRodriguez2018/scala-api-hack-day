@@ -13,7 +13,7 @@ trait Record[F[_]]{
 object Record {
   implicit def apply[F[_]](implicit ev: Record[F]): Record[F] = ev
 
-  final case class Id(id: String) extends AnyVal
+  final case class Id(id: Int) extends AnyVal
   /**
     * More generally you will want to decouple your edge representations from
     * your internal data structures, however this shows how you can
@@ -31,7 +31,10 @@ object Record {
   }
 
   def impl[F[_]: Applicative]: Record[F] = new Record[F]{
-    def getContent(n: Record.Id): F[Record.Message] =
-        Message(s"Content of Record # ${n.id} is: ").pure[F]
+    def getContent(n: Record.Id): F[Record.Message] = {
+      val id = n.id
+      val content = id * 2;
+      Message(s"Content of Record # ${id} is: ${content}").pure[F]
+    }
   }
 }
