@@ -23,6 +23,7 @@ object Routes {
     val dsl = new Http4sDsl[F] {}
     import dsl._
     HttpRoutes.of[F] {
+      case GET -> Root / "diagnose" => Ok("Ok")
       case GET -> Root / "hello" / name =>
         for {
           greeting <- H.hello(HelloWorld.Name(name))
@@ -37,7 +38,7 @@ object Routes {
     HttpRoutes.of[F] {
       case GET -> Root / "record" / id =>
         for {
-          content <- R.hello(Record.Name(id))
+          content <- R.getContent(Record.Id(id))
           resp <- Ok(content)
         } yield resp
     }
