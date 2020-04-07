@@ -1,21 +1,46 @@
-package com.reagroup.scalaApi
+package com.reagroup.simpleApi
 
-import io.circe._
-import org.http4s._
-import org.http4s.circe._
-import org.http4s.server._
-import org.http4s.dsl._
+import cats.effect.Sync
+import cats.implicits._
+import org.http4s.HttpRoutes
+import org.http4s.dsl.Http4sDsl
 
 object Routes {
-  val service = HttpService {
-    case GET -> Root / "diagnose" =>
-      Ok(Json.obj("message" -> Json.fromString(s"Ok")))
-    case GET -> Root / "hello" =>
-      Ok(Json.obj("message" -> Json.fromString(s"Hello World")))
-    case req @ POST -> Root / "record" =>{
-      println(req)
-      println("post request received")
-      Ok(Json.obj("message" -> Json.fromString(s"RECORD")))
+
+  def jokeRoutes[F[_]: Sync](J: Jokes[F]): HttpRoutes[F] = {
+    val dsl = new Http4sDsl[F] {}
+    import dsl._
+    HttpRoutes.of[F] {
+      case GET -> Root / "joke" =>
+        for {
+          joke <- J.get
+          resp <- Ok(joke)
+        } yield resp
     }
   }
+
+  def helloWorldRoutes[F[_]: Sync](H: HelloWorld[F]): HttpRoutes[F] = {
+    val dsl = new Http4sDsl[F] {}
+    import dsl._
+    HttpRoutes.of[F] {
+      case GET -> Root / "hello" / name =>
+        for {
+          greeting <- H.hello(HelloWorld.Name(name))
+          resp <- Ok(greeting)
+        } yield resp
+    }
+  }
+
+  def recordRoutes[F[_]: Sync](R: Record[F]): HttpRoutes[F] = {
+    val dsl = new Http4sDsl[F] {}
+    import dsl._
+    HttpRoutes.of[F] {
+      case GET -> Root / "record" / id =>
+        for {
+          content <- R.hello(Record.Name(id))
+          resp <- Ok(content)
+        } yield resp
+    }
+  }
+
 }
