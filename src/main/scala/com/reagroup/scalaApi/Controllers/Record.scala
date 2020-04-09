@@ -34,6 +34,7 @@ object Record {
     def getContent(n: Record.Id): F[Record.Message] = {
       val id = n.id
       val content = id * 2;
+      // Get record from db
       Message(s"Content of Record # ${id} is: ${content}").pure[F]
     }
   }
